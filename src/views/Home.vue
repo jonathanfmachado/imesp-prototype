@@ -27,7 +27,7 @@
         <b-col>
           <span style="font-size:13px; aligment:left">
             Insira a matéria abaixo ou
-            <a href="#">clique aqui para fazer o upload do arquivo.</a>
+            <a @click="openFileDialog()" style="color:#008eff; text-decoration:underline">clique aqui para fazer o upload do arquivo.</a>
           </span>
           <form>
             <textarea name="editor1" id="editor1" rows="10" cols="80">
@@ -45,6 +45,7 @@
         <b-col style="background:#c6c6c6">Preview</b-col>
       </b-row>
     </b-container>
+    <input id="file-input" type="file" name="name" style="display: none;" />
   </div>
 </template>
 
@@ -79,6 +80,12 @@ export default {
         { value: 2, text: "Outro" }
       ]
     };
+  },
+  methods: {
+    openFileDialog(){
+      document.getElementById('file-input').click();
+    }
+
   }
 };
 </script>
