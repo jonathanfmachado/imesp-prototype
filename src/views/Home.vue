@@ -6,19 +6,19 @@
       <b-row>
         <b-col>
           Caderno:
-          <b-form-select :options="cadernos" value="null"></b-form-select>
+          <b-form-select :options="cadernos" value="1"></b-form-select>
         </b-col>
         <b-col>
           Tipo:
-          <b-form-select :options="tipoMateria" value="null"></b-form-select>
+          <b-form-select :options="tipoMateria" value="2"></b-form-select>
         </b-col>
         <b-col>
           Data Publicação:
-          <b-form-input type="date"></b-form-input>
+          <b-form-input type="date" value="2019-07-16"></b-form-input>
         </b-col>
         <b-col>
           Seção:
-          <b-form-select :options="secao" value="null"></b-form-select>
+          <b-form-select :options="secao" value="1"></b-form-select>
         </b-col>
       </b-row>
     </b-container>
@@ -29,7 +29,13 @@
           style="padding: 0.3rem 1.25rem !important; margin-bottom: 0.2rem;"
           variant="success"
           show
-        >Valor R$ {{storyText.length + ",00"}}</b-alert>
+        >
+          Valor
+          <strong>
+            <!-- {{getPrice(storyText)}} -->
+            {{getPriceCmPorCol(storyText)}}
+          </strong>
+        </b-alert>
       </b-row>
       <b-row>
         <b-col>
@@ -44,9 +50,8 @@
             <textarea name="editor1" id="editor1" rows="10" cols="80" v-model="storyText"></textarea>
           </form>
         </b-col>
-        <b-col style="background:#c6c6c6">
-          <span style="display:block">Preview</span>
-          <span style="font-size: 13px; color: rgb(0, 142, 255);" @click="refresh()">Refresh</span>
+        <b-col style="background:#c6c6c6; padding: 1rem;">
+          <span style="display:block; margin-bottom: 1rem;" @click="refresh()">Preview</span>
           <!-- HTML title specified via default slot -->
           <div v-if="showWarning">
             <b-tooltip
@@ -84,13 +89,17 @@ export default {
   mounted() {
     CKEDITOR.config.height = 350;
     CKEDITOR.replace("editor1");
+    // On changes:
+    //     CKEDITOR.instances.editor1.on( 'change', () => {
+    //     this.refresh()
+    // } );
   },
   data() {
     return {
       palavras: [
-        { text: "Considerando", id: 1021231109231 },
-        { text: "fundamento", id: 10293814209231 },
-        { text: "CONVOLAR", id: 10295309231 }
+        { text: "Considerando", id: 1 },
+        { text: "fundamento", id: 2 },
+        { text: "CONVOLAR", id: 3 }
       ],
       showWarning: false,
       precoMateria: 0,
@@ -101,7 +110,7 @@ export default {
         { value: 2, text: "Executivo II" }
       ],
       secao: [
-        { value: null, text: "Selecione o Caderno" },
+        { value: null, text: "Selecione a Seção" },
         { value: 1, text: "IOSP-Teste" }
       ],
       tipoMateria: [
@@ -117,12 +126,27 @@ export default {
     };
   },
   methods: {
+    getPrice(text) {
+      const value = text.length * 0.999;
+      return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        minimumFractionDigits: 2,
+        currency: "BRL"
+      }).format(value);
+    },
+    getPriceCmPorCol(text) {
+      const value = text.length * 0.98;
+      return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        minimumFractionDigits: 2,
+        currency: "BRL"
+      }).format(value);
+    },
     openFileDialog() {
       document.getElementById("file-input").click();
     },
     refresh() {
       var storyText = CKEDITOR.instances.editor1.getData();
-
       var i;
       for (i = 0; i < this.palavras.length; i++) {
         console.log("tes");
@@ -137,9 +161,13 @@ export default {
         );
       }
       this.storyText = storyText;
-
       this.showWarning = true;
     }
   }
 };
 </script>
+<style>
+p > strong {
+  font-size: 13px;
+}
+</style>
